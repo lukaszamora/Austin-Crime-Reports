@@ -13,6 +13,7 @@ This Github repo has the following structure:
 
 ```
 .
+├── Crime_Reports.csv       # Dataset
 ├── crime-analysis.sql      # Microsoft SQL Server query file 
 ├── results                 # Generated .csv files from SQL
 ├── tableau                 # Tableau notebooks for visualization
