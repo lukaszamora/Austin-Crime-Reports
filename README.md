@@ -7,47 +7,15 @@ The data was gathered from APD's [Crime Reports](https://data.austintexas.gov/Pu
 From [data.austintexas](https://data.austintexas.gov/Public-Safety/Crime-Reports/fdj4-gpfu):
 > This dataset contains a record of incidents that the Austin Police Department responded to and wrote a report. Please note one incident may have several offenses associated with it, but this dataset only depicts the highest level offense of that incident. Data is from 2003 to present. This dataset is updated weekly. Understanding the following conditions will allow you to get the most out of the data provided. Due to the methodological differences in data collection, different data sources may produce different results. This database is updated weekly, and a similar or same search done on different dates can produce different results. Comparisons should not be made between numbers generated with this database to any other official police reports. Data provided represents only calls for police service where a report was written. Totals in the database may vary considerably from official totals following investigation and final categorization. Therefore, the data should not be used for comparisons with Uniform Crime Report statistics.
 
-## Repository Structure
+## Introduction/Problem Definition
 
-This Github repo has the following structure: 
+To have a perspective of the state of security of Austin I defined few questions, which I answered during this data analytic project. Here is the list of these questions:
+1. How has the number of various crimes changed over time in Austin?
+2. How have the number arrests corresponded to the crimes changed over time in Austin?
+3. Which crimes are most frequently committed?
+4. Which locations are these frequent crimes being committed to?
+5. Are there certain high crime locations for certain crimes?
+6. How has the number of certain crimes changed over the years in Austin?
 
-```
-.
-├── Crime_Reports.csv       # Dataset
-├── crime-analysis.sql      # Microsoft SQL Server query file 
-├── results                 # Generated .csv files from SQL
-├── tableau                 # Tableau notebooks for visualization
-└── README.md
-```
+To answer these question I took the four main steps of the KDD data mining pipeline, which are respectively, data preprocessing, data pre-processing, analysis and post-processing. In this documentation, I also use the same name for each section of the report. In Section 2, we describe how we gathered our data and the tasks we did in regard to clean our data as data Pre-Processing phase. Section 3 we dive straight into the data analysis process, we first introduce the methods and technologies we used and then we provide details on how we dealt with crime data in Spark SQL. Section 4 we bring the visualization of our results. Finally, in Section 5 we bring the conclusion.
 
-## Dataset
-
-The dataset `Crime_Reports.csv` contains the following fields:
-
-* `Incident Number`: Incident report number
-* `Highest Offense Description`: Description
-* `Highest Offense Code`: Code
-* `Family Violence`: Incident involves family voilence? `Y`=yes, `N`=no
-* `Occurred Date Time`: Date and time (combined) incident occurred
-* `Occurred Date`: Date the incident occurred
-* `Occurred Time`: Time the incident occurred
-* `Report Date Time`: Date and time (combined) incident was reported
-* `Report Date`: Date the incident was reported
-* `Report Time`: Time the incident was reported
-* `Location Type`: General description of the premise where the incident occurred
-* `Address`: Incident location
-* `Zip Code`: Zip code where incident occurred
-* `Council District`: Austin city council district where incident occurred
-* `APD Sector`: APD sector where incident occurred
-* `APD District`: APD distrcit where incident occurred
-* `PRA`: APD police reporting area where incident occurred
-* `Cencus Tract`: Cencus tract where incident occurred
-* `Clearance Status`: How/whether crime was solved (see lookup)
-* `Clearance Date`: Date crime was solved
-* `UCR Category`: Code for the most serious crime identified by the FBI as part of its Uniform Crime Reporting program
-* `Category Description`: Description for the most serious crimes identified by the FBI as part of its Uniform Crime Reporting program
-* `X-coordinate`: X-coordinate where the incident occurred
-* `Y-coordinate`: Y-coordinate where the incident occurred
-* `Latitude`: Latitude where the incident occurred
-* `Longitude`: Longitude where the incident occurred
-* `Location`: 3rd party generated spatial column (not from source)
