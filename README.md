@@ -94,3 +94,253 @@ only showing top 20 rows
 #### Question 2: How have the number of arrests corresponding to the crimes changed over time in Austin?
 
 By calculating the total amount of crimes and arrest each year, we can see how many crimes were solved and see how the crime occurred in Austin during 2003-2020. The following SQL lets us get the number of crimes and arrest each year.
+
+```
+   crimes           arrests
++----+-----+      +----+-----+
+|year|count|      |year|count|
++----+-----+      +----+-----+
+|2003|62793|      |2003|13097|
+|2004|60785|      |2004|15174|
+|2005|64123|      |2005|14645|
+|2006|64605|      |2006|14385|
+|2007|68777|      |2007|15282|
+|2008|71728|      |2008|17830|
+|2009|70136|      |2009|16800|
+|2010|67573|      |2010|15169|
+|2011|63425|      |2011|14303|
+|2012|62052|      |2012|13921|
+|2013|59334|      |2013|13261|
+|2014|55839|      |2014|12446|
+|2015|52814|      |2015|10925|
+|2016|50760|      |2016|10876|
+|2017|48053|      |2017|10544|
+|2018|45306|      |2018|8798 |
+|2019|53457|      |2019|8738 |
+|2020|27001|      |2020|3722 |
++----+-----+      +----+-----+
+```
+
+#### Question 3: Which crimes are frequently committed?
+
+More specifically in this question, we want to know what the most frequent crime is committed between the years 2003 and 2020, so we need to calculate the number of each crime type during all these years. To find the result we used the following Spark SQL command:
+
+```
+df_clean4 = df_clean.groupBy('highest_offense_description').count().orderBy(desc("count")).show(20, False)
+```
+
+```
++------------------------------+------+
+|highest_offense_description   |count |
++------------------------------+------+
+|BURGLARY OF VEHICLE           |107116|
+|FAMILY DISTURBANCE            |99369 |
+|THEFT                         |82773 |
+|CRIMINAL MISCHIEF             |63418 |
+|BURGLARY OF RESIDENCE         |45327 |
+|ASSAULT W/INJURY-FAM/DATE VIOL|42313 |
+|HARASSMENT                    |34921 |
+|DWI                           |29860 |
+|DISTURBANCE - OTHER           |29319 |
+|PUBLIC INTOXICATION           |26349 |
+|CUSTODY ARREST TRAFFIC WARR   |22042 |
+|RUNAWAY CHILD                 |20152 |
+|AUTO THEFT                    |19291 |
+|ASSAULT WITH INJURY           |19222 |
+|BURGLARY NON RESIDENCE        |17587 |
+|WARRANT ARREST NON TRAFFIC    |17159 |
+|POSSESSION OF MARIJUANA       |15654 |
+|POSS OF DRUG PARAPHERNALIA    |14560 |
+|POSS CONTROLLED SUB/NARCOTIC  |14095 |
+|CRIMINAL TRESPASS             |13725 |
++------------------------------+------+
+```
+
+#### Question 4: Which locations are these frequent crimes being committed to?
+
+From this question, we can see where crimes happen the most in Chicago, and from the result, we found out in Chicago most of the crimes occur on the street. The following Spark SQL statement will show the result.
+
+```
+df_clean5 = df_clean.groupBy("location_type").count().orderBy(desc("count")).show(20,False);
+```
+
+```
++----------------------------------+------+
+|location_type                     |count |
++----------------------------------+------+
+|RESIDENCE / HOME                  |508667|
+|STREETS / HWY / ROAD / ALLEY      |227327|
+|PARKING LOTS / GARAGE             |104159|
+|COMMERCIAL / OFFICE BUILDING      |61327 |
+|OTHER / UNKNOWN                   |29829 |
+|RESTAURANTS                       |12758 |
+|HOTEL / MOTEL / ETC.              |12615 |
+|BAR / NIGHT CLUB                  |9381  |
+|GOVERNMENT / PUBLIC BUILDING      |9314  |
+|CONVENIENCE STORE                 |9120  |
+|null                              |8776  |
+|DEPARTMENT / DISCOUNT STORE       |8091  |
+|DRUG STORE / DR. OFFICE / HOSPITAL|5088  |
+|SPECIALTY  STORE (TV  FUR ETC.)   |5087  |
+|GAS / SERVICE STATIONS            |4764  |
+|CONSTRUCTION SITE                 |3973  |
+|GROCERY / SUPERMARKET             |3810  |
+|BANKS / SAVINGS & LOAN            |3447  |
+|SCHOOLS / COLLEGES                |3193  |
+|FIELD / WOODS                     |3133  |
++----------------------------------+------+
+only showing top 20 rows
+```
+
+#### Question 5: Are there specific high crime locations for certain crimes?
+
+From the answer to the question, we can view which location has what type of crimes occurred and view what kind of crimes happen the most in a certain location. The Spark SQL showed the amount of each type of crime for each location.
+
+```
+df_clean6 = df_clean.groupBy("highest_offense_description", "location_type").count().sort("highest_offense_description", "location_type").show(20,False)
+```
+
+```
++------------------------------+----------------------------------+-----+
+|highest_offense_description   |location_type                     |count|
++------------------------------+----------------------------------+-----+
+|ABANDONED REFRIGERATOR        |RESIDENCE / HOME                  |3    |
+|ABUSE OF 911                  |DRUG STORE / DR. OFFICE / HOSPITAL|1    |
+|ABUSE OF 911                  |HOTEL / MOTEL / ETC.              |1    |
+|ABUSE OF 911                  |OTHER / UNKNOWN                   |1    |
+|ABUSE OF 911                  |PARKING LOTS / GARAGE             |1    |
+|ABUSE OF 911                  |RESIDENCE / HOME                  |19   |
+|ABUSE OF 911                  |RESTAURANTS                       |1    |
+|ABUSE OF 911                  |STREETS / HWY / ROAD / ALLEY      |3    |
+|ABUSE OF CORPSE               |RESIDENCE / HOME                  |1    |
+|ABUSE OF OFFICIAL CAPACITY    |null                              |4    |
+|ABUSE OF OFFICIAL CAPACITY    |BANKS / SAVINGS & LOAN            |1    |
+|ABUSE OF OFFICIAL CAPACITY    |COMMERCIAL / OFFICE BUILDING      |2    |
+|ABUSE OF OFFICIAL CAPACITY    |GOVERNMENT / PUBLIC BUILDING      |5    |
+|ABUSE OF OFFICIAL CAPACITY    |OTHER / UNKNOWN                   |1    |
+|ABUSE OF OFFICIAL CAPACITY    |RESIDENCE / HOME                  |2    |
+|AGG ASLT ENHANC STRANGL/SUFFOC|null                              |2    |
+|AGG ASLT ENHANC STRANGL/SUFFOC|DRUG STORE / DR. OFFICE / HOSPITAL|1    |
+|AGG ASLT ENHANC STRANGL/SUFFOC|FIELD / WOODS                     |3    |
+|AGG ASLT ENHANC STRANGL/SUFFOC|HOTEL / MOTEL / ETC.              |20   |
+|AGG ASLT ENHANC STRANGL/SUFFOC|OTHER / UNKNOWN                   |2    |
++------------------------------+----------------------------------+-----+
+only showing top 20 rows
+```
+
+#### Question 6: How has the number of certain crimes changed over the years in Austin?
+
+I wanted to view a specific type of crimes to see if they are increasing or decreasing over the years. I chose Car Burglaries since it is the most occurred crime in Austin, Theft, Possession of Marijuana, and Home Burglaries. The following Spark SQL code will output the amount of each crime per year, respectively.
+
+```
+# car burglary
+df_clean7 = df_clean.where("highest_offense_description == 'BURGLARY OF VEHICLE'").groupBy("year").count().orderBy("year").show();
+
+# theft
+df_clean8 = df_clean.where("highest_offense_description == 'THEFT'").groupBy("year").count().orderBy("year").show();
+
+# possession of marijuana
+df_clean9 = df_clean.where("highest_offense_description == 'POSSESSION OF MARIJUANA'").groupBy("year").count().orderBy("year").show();
+
+# home burglary
+df_clean10 = df_clean.where("highest_offense_description == 'BURGLARY OF RESIDENCE'").groupBy("year").count().orderBy("year").show();
+```
+
+```
+  car theft        theft        poss. of weed   home robbery
++----+-----+    +----+-----+    +----+-----+    +----+-----+
+|year|count|    |year|count|    |year|count|    |year|count|
++----+-----+    +----+-----+    +----+-----+    +----+-----+
+|2003| 7567|    |2003| 4367|    |2003|  634|    |2003| 2731|
+|2004| 7021|    |2004| 4755|    |2004|  544|    |2004| 2715|
+|2005| 7386|    |2005| 4887|    |2005|  531|    |2005| 2781|
+|2006| 6702|    |2006| 5262|    |2006|  577|    |2006| 2971|
+|2007| 7550|    |2007| 5702|    |2007|  612|    |2007| 3263|
+|2008| 6744|    |2008| 5813|    |2008|  684|    |2008| 3215|
+|2009| 7974|    |2009| 5614|    |2009| 1237|    |2009| 3847|
+|2010| 6696|    |2010| 5608|    |2010| 1458|    |2010| 3903|
+|2011| 5943|    |2011| 5011|    |2011| 1310|    |2011| 3048|
+|2012| 6171|    |2012| 5054|    |2012| 1229|    |2012| 3136|
+|2013| 5840|    |2013| 4799|    |2013| 1216|    |2013| 2714|
+|2014| 4973|    |2014| 4419|    |2014| 1148|    |2014| 2419|
+|2015| 4542|    |2015| 4307|    |2015| 1001|    |2015| 1951|
+|2016| 3946|    |2016| 4137|    |2016|  956|    |2016| 1885|
+|2017| 4111|    |2017| 3800|    |2017|  968|    |2017| 1420|
+|2018| 4737|    |2018| 3445|    |2018|  830|    |2018| 1338|
+|2019| 6096|    |2019| 4036|    |2019|  525|    |2019| 1482|
+|2020| 3117|    |2020| 1757|    |2020|  194|    |2020|  508|
++----+-----+    +----+-----+    +----+-----+    +----+-----+
+```
+
+## Data Post-Processing:  Visualization
+
+As we got the analysis and result by using Spark SQL in Section 3, we now import the data into Tableau and create charts to get better visualizations and to help understand the resulting data. The following charts are only images, but the Tableau workbook I created is accessible through [here](https://public.tableau.com/profile/lukas7590#!/vizhome/AustinCrimeReports/Sheet1).
+
+#### How has the number of various crimes changed over time in Austin?
+
+We are able to visualize the data as an area-filled bar graph which allows us to visualize which years have the most and least amount of crime. By looking over the chart, we can see that from 2004--2008 there is a steady increase in crime, however, there is almost a 10 year decline in crime. This is then followed by a steep 2 year increase.
+
+![fig1](images/fig1.png)
+
+#### How have the number arrests corresponding to the crimes changed over time in Austin?
+
+As we see in the bar chart, the comparison between the arrest and crimes amount for each year let us see how the police abilities were not quite great since none of the arrests were higher than half of the crime rate. We can conclude from this chart that the security in Austin does not look great with the number of crimes that were not resolved by the arrest.
+
+![fig2](images/fig2.png)
+
+#### Are there any trends in the crimes being committed?
+
+As we can see on the chart, there is quite a large amount of vehicle theft and general theft when compared to other crimes, so when living or visiting Austin it would be best to stay alert for any theft that might occur.
+
+![fig3](images/fig3.png)
+
+#### Which crimes are most frequently committed?
+
+From the pie chart, we can see that vehicle theft has occurred most frequently as it makes up of **14.59%** of crime because it is correlated to how theft could have high return and low risk if not being caught. As we can see in the chart, car theft, family disturbance, theft and criminal mischief are the most frequent occur crimes in Austin which make up of **48.03%** out of all crimes committed.
+
+![fig4](images/fig4.png)
+
+#### Which locations are these frequent crimes being committed to?
+
+From the chart, we can see that most crime is committed in a person's residence.
+
+![fig5](images/fig5.png)
+
+#### Are there certain high crime locations for certain crimes?
+
+From the graph, family disturbances and vechile theft are the top crimes being committed in people's homes. The second top location is any type of street or highway. 
+
+![fig6](images/fig6.png)
+
+### Specific Crime Trends
+
+Lastly, I wanted to look at some of the top crimes being committed in Austin and compare the amount being committed on a yearly basis. 
+
+#### Car Burglary 
+
+The following graph shows the total amount of car theft being committed per year. We can see that the peak was in 2009 with a total of 7,974 occurrences. Since then, there has been a steady decline in occurrences with 2016 as the lowest year by occurrences. However, it seems there has been a rapid increase in the last 3 years.
+
+![fig7](images/fig7.png)
+
+#### Theft
+
+The following graph shows the total amount of general theft being committed per year. We can see that the peak was in 2008 with a total of 5,813 occurrences. Since then, there has been a steady decline in occurrences with 2016 as the lowest year by occurrences.
+
+![fig8](images/fig8.png)
+
+#### Possession of Marijuana
+
+This graph shows the total amount of marijuana possession charges throught the years. This graph is interesting because 2008 was the start of a massive increase in occurrences. More specifically, there is a **113.16%** increase between 2008 and 2010. Since then there seems to be a steady decrease.
+
+![fig9](images/fig9.png)
+
+#### Home Burglary
+
+Lastly, this graph shows the total amount of home theft throughout each year. The peak occurred in 2010 with 3,903 occurrences. 
+
+![fig10](images/fig10.png)
+
+## Conclusion
+
+In this project, I explored Austin Police Department's Crime reports data. This was an interesting project looking at crime trends throught the years. Using Spark SQL provided fast queries when working with this large of a dataset, and Tableau worked well with creating interactive visualizations.
+
