@@ -57,11 +57,8 @@ As explained in a previous section, I used Spark SQL (more specifically, the `py
 #### Question 1: How has the number of various crimes changed over time in Austin?
 
 From this question, we can view how each type of crime has been decreasing or increasing over the years. The following Spark SQL code will output this table as a result.
-```
-df_clean = df.withColumn('year',f.year(f.to_timestamp('occurred_date','MM/dd/yyyy')))
 
-df_clean1 = df_clean.groupBy("highest_offense_description", "year").count().orderBy("year","highest_offense_description",ascending=True).show(20,False)
-```
+<script src="https://gist.github.com/lukaszamora/0055ad2cc673023f0a17ac01f61af6a3.js"></script>
 
 ```
 +------------------------------+----+-----+
