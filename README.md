@@ -58,7 +58,13 @@ As explained in a previous section, I used Spark SQL (more specifically, the `py
 
 From this question, we can view how each type of crime has been decreasing or increasing over the years. The following Spark SQL code will output this table as a result.
 
-<script src="https://gist.github.com/lukaszamora/0055ad2cc673023f0a17ac01f61af6a3.js"></script>
+```
+df_clean = df.withColumn('year',f.year(f.to_timestamp('occurred_date','MM/dd/yyyy')))
+
+crime_count = df_clean.groupBy("highest_offense_description", "year") \
+              .count().orderBy("year","highest_offense_description",ascending=True) \
+              .show(20,False)
+```
 
 ```
 +------------------------------+----+-----+
@@ -123,7 +129,7 @@ By calculating the total amount of crimes and arrest each year, we can see how m
 More specifically in this question, we want to know what the most frequent crime is committed between the years 2003 and 2020, so we need to calculate the number of each crime type during all these years. To find the result we used the following Spark SQL command:
 
 ```
-df_clean4 = df_clean.groupBy('highest_offense_description').count().orderBy(desc("count")).show(20, False)
+top_crimes = df_clean.groupBy('highest_offense_description').count().orderBy(desc("count")).show(20, False)
 ```
 
 ```
@@ -158,7 +164,7 @@ df_clean4 = df_clean.groupBy('highest_offense_description').count().orderBy(desc
 From this question, we can see where crimes happen the most in Chicago, and from the result, we found out in Chicago most of the crimes occur on the street. The following Spark SQL statement will show the result.
 
 ```
-df_clean5 = df_clean.groupBy("location_type").count().orderBy(desc("count")).show(20,False);
+top_locations = df_clean.groupBy("location_type").count().orderBy(desc("count")).show(20,False);
 ```
 
 ```
@@ -194,7 +200,7 @@ only showing top 20 rows
 From the answer to the question, we can view which location has what type of crimes occurred and view what kind of crimes happen the most in a certain location. The Spark SQL showed the amount of each type of crime for each location.
 
 ```
-df_clean6 = df_clean.groupBy("highest_offense_description", "location_type").count().sort("highest_offense_description", "location_type").show(20,False)
+crime_location = df_clean.groupBy("highest_offense_description", "location_type").count().sort("highest_offense_description", "location_type").show(20,False)
 ```
 
 ```
@@ -231,16 +237,16 @@ I wanted to view a specific type of crimes to see if they are increasing or decr
 
 ```
 # car burglary
-df_clean7 = df_clean.where("highest_offense_description == 'BURGLARY OF VEHICLE'").groupBy("year").count().orderBy("year").show();
+car_theft = df_clean.where("highest_offense_description == 'BURGLARY OF VEHICLE'").groupBy("year").count().orderBy("year").show();
 
 # theft
-df_clean8 = df_clean.where("highest_offense_description == 'THEFT'").groupBy("year").count().orderBy("year").show();
+theft = df_clean.where("highest_offense_description == 'THEFT'").groupBy("year").count().orderBy("year").show();
 
 # possession of marijuana
-df_clean9 = df_clean.where("highest_offense_description == 'POSSESSION OF MARIJUANA'").groupBy("year").count().orderBy("year").show();
+marijuana = df_clean.where("highest_offense_description == 'POSSESSION OF MARIJUANA'").groupBy("year").count().orderBy("year").show();
 
 # home burglary
-df_clean10 = df_clean.where("highest_offense_description == 'BURGLARY OF RESIDENCE'").groupBy("year").count().orderBy("year").show();
+home_theft = df_clean.where("highest_offense_description == 'BURGLARY OF RESIDENCE'").groupBy("year").count().orderBy("year").show();
 ```
 
 ```
